@@ -109,6 +109,14 @@ fn run_ui(
                         KeyCode::Char('q') => return Ok(()),
                         KeyCode::Down | KeyCode::Char('j') => state.select_next(),
                         KeyCode::Up | KeyCode::Char('k') => state.select_previous(),
+                        KeyCode::PageDown => {
+                            let page_size = terminal.size()?.height.saturating_sub(6) as usize;
+                            state.page_down(page_size);
+                        }
+                        KeyCode::PageUp => {
+                            let page_size = terminal.size()?.height.saturating_sub(6) as usize;
+                            state.page_up(page_size);
+                        }
                         KeyCode::Enter | KeyCode::Char(' ') => state.toggle_expand(),
                         _ => {}
                     }

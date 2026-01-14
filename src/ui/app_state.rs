@@ -1,4 +1,5 @@
 use crate::domain::PremiumResult;
+use ratatui::widgets::ListState;
 use std::time::Duration;
 
 /// State management for the TUI application
@@ -8,17 +9,21 @@ pub struct AppState {
     pub selected_index: Option<usize>,
     pub selected_expanded: bool,
     pub total_calculation_time: Duration,
+    pub list_state: ListState,
 }
 
 impl AppState {
     pub fn new(results: Vec<PremiumResult>, total_time: Duration) -> Self {
         let selected_index = if results.is_empty() { None } else { Some(0) };
+        let mut list_state = ListState::default();
+        list_state.select(selected_index);
         
         Self {
             results,
             selected_index,
             selected_expanded: false,
             total_calculation_time: total_time,
+            list_state,
         }
     }
 
@@ -33,6 +38,7 @@ impl AppState {
             None => 0,
         });
         
+        self.list_state.select(self.selected_index);
         self.selected_expanded = false;
     }
 
@@ -47,6 +53,48 @@ impl AppState {
             None => 0,
         });
         
+        self.list_state.select(self.selected_index);
+        self.selected_expanded = false;
+    }
+
+    pub fn page_down(&mut self, page_size: usize) {
+        if self.results.is_empty() {
+            return;
+        }
+        
+        self.selected_index = Some(match self.selected_index {
+            Some(i) => {
+                let next = i + page_size;
+                if next >= self.results.len() {
+                    self.results.len() - 1
+                } else {
+                    next
+                }
+            }
+            None => 0,
+        });
+        
+        self.list_state.select(self.selected_index);
+        self.selected_expanded = false;
+    }
+
+    pub fn page_up(&mut self, page_size: usize) {
+        if self.results.is_empty() {
+            return;
+        }
+        
+        self.selected_index = Some(match self.selected_index {
+            Some(i) => {
+                if i < page_size {
+                    0
+                } else {
+                    i - page_size
+                }
+            }
+            None => 0,
+        });
+        
+        self.list_state.select(self.selected_index);
         self.selected_expanded = false;
     }
 

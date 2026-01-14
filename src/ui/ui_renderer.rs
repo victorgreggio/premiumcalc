@@ -9,7 +9,7 @@ use ratatui::{
 
 /// Renders the complete UI
 /// Follows Single Responsibility Principle - only handles UI rendering
-pub fn render(f: &mut Frame, state: &AppState) {
+pub fn render(f: &mut Frame, state: &mut AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Length(3), Constraint::Min(0), Constraint::Length(3)])
@@ -45,7 +45,7 @@ fn render_header(f: &mut Frame, area: ratatui::layout::Rect, state: &AppState) {
     f.render_widget(header, area);
 }
 
-fn render_main_content(f: &mut Frame, area: ratatui::layout::Rect, state: &AppState) {
+fn render_main_content(f: &mut Frame, area: ratatui::layout::Rect, state: &mut AppState) {
     let main_chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(40), Constraint::Percentage(60)])
@@ -58,7 +58,7 @@ fn render_main_content(f: &mut Frame, area: ratatui::layout::Rect, state: &AppSt
 fn render_applicant_list(
     f: &mut Frame,
     area: ratatui::layout::Rect,
-    state: &AppState,
+    state: &mut AppState,
 ) {
     let items: Vec<ListItem> = state
         .results
@@ -87,9 +87,13 @@ fn render_applicant_list(
 
     let list = List::new(items)
         .block(Block::default().borders(Borders::ALL).title("Applicants"))
-        .highlight_style(Style::default().bg(Color::DarkGray));
+        .highlight_style(
+            Style::default()
+                .bg(Color::DarkGray)
+                .add_modifier(Modifier::BOLD)
+        );
 
-    f.render_widget(list, area);
+    f.render_stateful_widget(list, area, &mut state.list_state);
 }
 
 fn render_detail_panel(
@@ -117,7 +121,7 @@ fn render_detail_panel(
 }
 
 fn render_footer(f: &mut Frame, area: ratatui::layout::Rect) {
-    let footer = Paragraph::new("↑/↓ or j/k: Navigate | Enter/Space: Expand | q: Quit")
+    let footer = Paragraph::new("↑/↓ or j/k: Navigate | PgUp/PgDn: Fast scroll | Enter/Space: Expand | q: Quit")
         .block(Block::default().borders(Borders::ALL))
         .style(Style::default().fg(Color::Gray));
     
