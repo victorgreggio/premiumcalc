@@ -67,33 +67,15 @@ mod tests {
     #[test]
     fn test_annual_premium() {
         let applicant = create_test_applicant();
-        let result = PremiumResult::new(
-            applicant,
-            250.0,
-            1.2,
-            1.0,
-            1.0,
-            1.0,
-            300.0,
-            0.5,
-        );
+        let result = PremiumResult::new(applicant, 250.0, 1.2, 1.0, 1.0, 1.0, 300.0, 0.5);
         assert_eq!(result.annual_premium(), 3600.0);
     }
 
     #[test]
     fn test_premium_result_creation() {
         let applicant = create_test_applicant();
-        let result = PremiumResult::new(
-            applicant.clone(),
-            250.0,
-            1.2,
-            1.0,
-            1.0,
-            1.0,
-            300.0,
-            0.5,
-        );
-        
+        let result = PremiumResult::new(applicant.clone(), 250.0, 1.2, 1.0, 1.0, 1.0, 300.0, 0.5);
+
         assert_eq!(result.base_premium, 250.0);
         assert_eq!(result.age_factor, 1.2);
         assert_eq!(result.final_premium, 300.0);
@@ -116,6 +98,7 @@ pub struct PremiumResult {
 }
 
 impl PremiumResult {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         applicant: Applicant,
         base_premium: f64,

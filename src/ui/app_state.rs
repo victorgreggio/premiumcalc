@@ -17,7 +17,7 @@ impl AppState {
         let selected_index = if results.is_empty() { None } else { Some(0) };
         let mut list_state = ListState::default();
         list_state.select(selected_index);
-        
+
         Self {
             results,
             selected_index,
@@ -31,13 +31,13 @@ impl AppState {
         if self.results.is_empty() {
             return;
         }
-        
+
         self.selected_index = Some(match self.selected_index {
             Some(i) if i >= self.results.len() - 1 => 0,
             Some(i) => i + 1,
             None => 0,
         });
-        
+
         self.list_state.select(self.selected_index);
         self.selected_expanded = false;
     }
@@ -46,13 +46,13 @@ impl AppState {
         if self.results.is_empty() {
             return;
         }
-        
+
         self.selected_index = Some(match self.selected_index {
             Some(0) => self.results.len() - 1,
             Some(i) => i - 1,
             None => 0,
         });
-        
+
         self.list_state.select(self.selected_index);
         self.selected_expanded = false;
     }
@@ -61,7 +61,7 @@ impl AppState {
         if self.results.is_empty() {
             return;
         }
-        
+
         self.selected_index = Some(match self.selected_index {
             Some(i) => {
                 let next = i + page_size;
@@ -73,7 +73,7 @@ impl AppState {
             }
             None => 0,
         });
-        
+
         self.list_state.select(self.selected_index);
         self.selected_expanded = false;
     }
@@ -82,18 +82,12 @@ impl AppState {
         if self.results.is_empty() {
             return;
         }
-        
+
         self.selected_index = Some(match self.selected_index {
-            Some(i) => {
-                if i < page_size {
-                    0
-                } else {
-                    i - page_size
-                }
-            }
+            Some(i) => i.saturating_sub(page_size),
             None => 0,
         });
-        
+
         self.list_state.select(self.selected_index);
         self.selected_expanded = false;
     }
@@ -103,8 +97,7 @@ impl AppState {
     }
 
     pub fn selected_result(&self) -> Option<&PremiumResult> {
-        self.selected_index
-            .and_then(|i| self.results.get(i))
+        self.selected_index.and_then(|i| self.results.get(i))
     }
 
     pub fn average_calculation_time_ms(&self) -> f64 {

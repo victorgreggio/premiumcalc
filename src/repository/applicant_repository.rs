@@ -22,12 +22,12 @@ impl ApplicantRepository for CsvApplicantRepository {
     fn load_all(&self) -> Result<Vec<Applicant>, Box<dyn Error>> {
         let mut rdr = csv::Reader::from_path(&self.file_path)?;
         let mut applicants = Vec::new();
-        
+
         for result in rdr.deserialize() {
             let applicant: Applicant = result?;
             applicants.push(applicant);
         }
-        
+
         Ok(applicants)
     }
 }

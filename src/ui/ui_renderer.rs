@@ -12,7 +12,11 @@ use ratatui::{
 pub fn render(f: &mut Frame, state: &mut AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Length(3), Constraint::Min(0), Constraint::Length(3)])
+        .constraints([
+            Constraint::Length(3),
+            Constraint::Min(0),
+            Constraint::Length(3),
+        ])
         .split(f.area());
 
     render_header(f, chunks[0], state);
@@ -28,7 +32,10 @@ fn render_header(f: &mut Frame, area: ratatui::layout::Rect, state: &AppState) {
                 .fg(Color::Cyan)
                 .add_modifier(Modifier::BOLD),
         ),
-        Span::raw(format!("| {} applicants calculated in ", state.results.len())),
+        Span::raw(format!(
+            "| {} applicants calculated in ",
+            state.results.len()
+        )),
         Span::styled(
             format!("{:.2}ms", state.total_calculation_time_ms()),
             Style::default().fg(Color::Green),
@@ -39,9 +46,12 @@ fn render_header(f: &mut Frame, area: ratatui::layout::Rect, state: &AppState) {
         )),
     ])];
 
-    let header = Paragraph::new(header_text)
-        .block(Block::default().borders(Borders::ALL).title("Insurance Premium Calculator"));
-    
+    let header = Paragraph::new(header_text).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Insurance Premium Calculator"),
+    );
+
     f.render_widget(header, area);
 }
 
@@ -55,11 +65,7 @@ fn render_main_content(f: &mut Frame, area: ratatui::layout::Rect, state: &mut A
     render_detail_panel(f, main_chunks[1], state);
 }
 
-fn render_applicant_list(
-    f: &mut Frame,
-    area: ratatui::layout::Rect,
-    state: &mut AppState,
-) {
+fn render_applicant_list(f: &mut Frame, area: ratatui::layout::Rect, state: &mut AppState) {
     let items: Vec<ListItem> = state
         .results
         .iter()
@@ -72,7 +78,7 @@ fn render_applicant_list(
                 result.final_premium,
                 result.calculation_time_ms
             );
-            
+
             let style = if state.selected_index == Some(i) {
                 Style::default()
                     .fg(Color::Yellow)
@@ -80,7 +86,7 @@ fn render_applicant_list(
             } else {
                 Style::default()
             };
-            
+
             ListItem::new(content).style(style)
         })
         .collect();
@@ -90,17 +96,13 @@ fn render_applicant_list(
         .highlight_style(
             Style::default()
                 .bg(Color::DarkGray)
-                .add_modifier(Modifier::BOLD)
+                .add_modifier(Modifier::BOLD),
         );
 
     f.render_stateful_widget(list, area, &mut state.list_state);
 }
 
-fn render_detail_panel(
-    f: &mut Frame,
-    area: ratatui::layout::Rect,
-    state: &AppState,
-) {
+fn render_detail_panel(f: &mut Frame, area: ratatui::layout::Rect, state: &AppState) {
     if let Some(result) = state.selected_result() {
         let detail_text = if state.selected_expanded {
             renderer::render_detailed(result)
@@ -121,9 +123,11 @@ fn render_detail_panel(
 }
 
 fn render_footer(f: &mut Frame, area: ratatui::layout::Rect) {
-    let footer = Paragraph::new("↑/↓ or j/k: Navigate | PgUp/PgDn: Fast scroll | Enter/Space: Expand | q: Quit")
-        .block(Block::default().borders(Borders::ALL))
-        .style(Style::default().fg(Color::Gray));
-    
+    let footer = Paragraph::new(
+        "↑/↓ or j/k: Navigate | PgUp/PgDn: Fast scroll | Enter/Space: Expand | q: Quit",
+    )
+    .block(Block::default().borders(Borders::ALL))
+    .style(Style::default().fg(Color::Gray));
+
     f.render_widget(footer, area);
 }

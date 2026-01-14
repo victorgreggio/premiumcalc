@@ -18,16 +18,16 @@ impl PremiumCalculationService {
     /// Calculate premium for a single applicant
     pub fn calculate(&self, applicant: &Applicant) -> Result<PremiumResult, Box<dyn Error>> {
         let start = Instant::now();
-        
+
         let mut engine = Engine::new();
         self.set_variables(&mut engine, applicant);
-        
+
         let formulas = self.formula_repository.load_all()?;
         engine.execute(formulas)?;
-        
+
         let result = self.extract_results(&engine, applicant)?;
         let calculation_time_ms = start.elapsed().as_secs_f64() * 1000.0;
-        
+
         Ok(PremiumResult::new(
             applicant.clone(),
             result.base_premium,
@@ -43,17 +43,44 @@ impl PremiumCalculationService {
     /// Set applicant data as variables in the formula engine
     fn set_variables(&self, engine: &mut Engine, applicant: &Applicant) {
         engine.set_variable("age".to_string(), Value::Number(applicant.age as f64));
-        engine.set_variable("gender".to_string(), Value::String(applicant.gender.clone()));
+        engine.set_variable(
+            "gender".to_string(),
+            Value::String(applicant.gender.clone()),
+        );
         engine.set_variable("smoker".to_string(), Value::Bool(applicant.smoker));
         engine.set_variable("bmi".to_string(), Value::Number(applicant.bmi));
-        engine.set_variable("blood_pressure_sys".to_string(), Value::Number(applicant.blood_pressure_sys as f64));
-        engine.set_variable("blood_pressure_dia".to_string(), Value::Number(applicant.blood_pressure_dia as f64));
-        engine.set_variable("cholesterol".to_string(), Value::Number(applicant.cholesterol as f64));
-        engine.set_variable("family_history_score".to_string(), Value::Number(applicant.family_history_score as f64));
-        engine.set_variable("coverage_amount".to_string(), Value::Number(applicant.coverage_amount));
-        engine.set_variable("coverage_years".to_string(), Value::Number(applicant.coverage_years as f64));
-        engine.set_variable("annual_income".to_string(), Value::Number(applicant.annual_income));
-        engine.set_variable("has_conditions".to_string(), Value::Bool(applicant.has_existing_conditions()));
+        engine.set_variable(
+            "blood_pressure_sys".to_string(),
+            Value::Number(applicant.blood_pressure_sys as f64),
+        );
+        engine.set_variable(
+            "blood_pressure_dia".to_string(),
+            Value::Number(applicant.blood_pressure_dia as f64),
+        );
+        engine.set_variable(
+            "cholesterol".to_string(),
+            Value::Number(applicant.cholesterol as f64),
+        );
+        engine.set_variable(
+            "family_history_score".to_string(),
+            Value::Number(applicant.family_history_score as f64),
+        );
+        engine.set_variable(
+            "coverage_amount".to_string(),
+            Value::Number(applicant.coverage_amount),
+        );
+        engine.set_variable(
+            "coverage_years".to_string(),
+            Value::Number(applicant.coverage_years as f64),
+        );
+        engine.set_variable(
+            "annual_income".to_string(),
+            Value::Number(applicant.annual_income),
+        );
+        engine.set_variable(
+            "has_conditions".to_string(),
+            Value::Bool(applicant.has_existing_conditions()),
+        );
     }
 
     /// Extract calculation results from the engine
@@ -73,7 +100,10 @@ impl PremiumCalculationService {
     }
 
     fn extract_number(&self, engine: &Engine, name: &str) -> Result<f64, Box<dyn Error>> {
-        match engine.get_result(name).ok_or(format!("{} not found", name))? {
+        match engine
+            .get_result(name)
+            .ok_or(format!("{} not found", name))?
+        {
             Value::Number(n) => Ok(n),
             _ => Err(format!("{} is not a number", name).into()),
         }
@@ -120,10 +150,10 @@ mod tests {
         let formula_repo = Box::new(InMemoryFormulaRepository::new());
         let service = PremiumCalculationService::new(formula_repo);
         let applicant = create_test_applicant();
-        
+
         let result = service.calculate(&applicant);
         assert!(result.is_ok());
-        
+
         let result = result.unwrap();
         assert_eq!(result.applicant.id, 1);
         assert!(result.base_premium > 0.0);
@@ -137,7 +167,7 @@ mod tests {
         let service = PremiumCalculationService::new(formula_repo);
         let mut applicant = create_test_applicant();
         applicant.smoker = true;
-        
+
         let result = service.calculate(&applicant).unwrap();
         assert!(result.lifestyle_multiplier >= 1.8);
     }
@@ -148,7 +178,7 @@ mod tests {
         let service = PremiumCalculationService::new(formula_repo);
         let mut applicant = create_test_applicant();
         applicant.existing_conditions = "diabetes".to_string();
-        
+
         let result = service.calculate(&applicant).unwrap();
         assert!(result.lifestyle_multiplier >= 1.6);
     }
@@ -157,17 +187,17 @@ mod tests {
     fn test_calculate_premium_age_factors() {
         let formula_repo = Box::new(InMemoryFormulaRepository::new());
         let service = PremiumCalculationService::new(formula_repo);
-        
+
         let mut young = create_test_applicant();
         young.age = 25;
         let young_result = service.calculate(&young).unwrap();
         assert_eq!(young_result.age_factor, 1.0);
-        
+
         let mut middle = create_test_applicant();
         middle.age = 45;
         let middle_result = service.calculate(&middle).unwrap();
         assert_eq!(middle_result.age_factor, 1.5);
-        
+
         let mut senior = create_test_applicant();
         senior.age = 65;
         let senior_result = service.calculate(&senior).unwrap();
@@ -179,7 +209,7 @@ mod tests {
         let formula_repo = Box::new(InMemoryFormulaRepository::new());
         let service = PremiumCalculationService::new(formula_repo);
         let applicant = create_test_applicant();
-        
+
         let result = service.calculate(&applicant).unwrap();
         let expected = (500000.0 / 1000.0) * 0.5;
         assert_eq!(result.base_premium, expected);
@@ -193,7 +223,7 @@ mod tests {
         // Set to optimal blood pressure
         applicant.blood_pressure_sys = 110;
         applicant.blood_pressure_dia = 70;
-        
+
         let result = service.calculate(&applicant).unwrap();
         // Healthy applicant should have health_risk_score of 1.0
         assert_eq!(result.health_risk_score, 1.0);
@@ -203,15 +233,15 @@ mod tests {
     fn test_high_bmi_increases_premium() {
         let formula_repo = Box::new(InMemoryFormulaRepository::new());
         let service = PremiumCalculationService::new(formula_repo);
-        
+
         let mut normal = create_test_applicant();
         normal.bmi = 23.0;
         let normal_result = service.calculate(&normal).unwrap();
-        
+
         let mut obese = create_test_applicant();
         obese.bmi = 32.0;
         let obese_result = service.calculate(&obese).unwrap();
-        
+
         assert!(obese_result.final_premium > normal_result.final_premium);
     }
 
@@ -219,15 +249,15 @@ mod tests {
     fn test_high_cholesterol_increases_premium() {
         let formula_repo = Box::new(InMemoryFormulaRepository::new());
         let service = PremiumCalculationService::new(formula_repo);
-        
+
         let mut normal = create_test_applicant();
         normal.cholesterol = 190;
         let normal_result = service.calculate(&normal).unwrap();
-        
+
         let mut high = create_test_applicant();
         high.cholesterol = 250;
         let high_result = service.calculate(&high).unwrap();
-        
+
         assert!(high_result.health_risk_score > normal_result.health_risk_score);
     }
 
@@ -235,15 +265,15 @@ mod tests {
     fn test_duration_discount() {
         let formula_repo = Box::new(InMemoryFormulaRepository::new());
         let service = PremiumCalculationService::new(formula_repo);
-        
+
         let mut short_term = create_test_applicant();
         short_term.coverage_years = 10;
         let short_result = service.calculate(&short_term).unwrap();
-        
+
         let mut long_term = create_test_applicant();
         long_term.coverage_years = 30;
         let long_result = service.calculate(&long_term).unwrap();
-        
+
         // 30-year coverage gets 5% discount
         assert!(long_result.final_premium < short_result.final_premium);
     }

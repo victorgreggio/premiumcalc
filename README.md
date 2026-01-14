@@ -2,6 +2,10 @@
 
 An insurance premium calculator demonstration using the `formcalc` formula engine with a terminal user interface (TUI) built with `ratatui`.
 
+## Screenshot
+
+![alt text](image.png)
+
 ## Features
 
 - **Realistic Premium Calculation**: Uses multiple formulas that work together to calculate insurance premiums
@@ -326,6 +330,17 @@ running 19 tests
 test result: ok. 19 passed; 0 failed; 0 ignored
 ```
 
-## Screenshot
+## CI/CD
 
-![alt text](image.png)
+The project uses GitHub Actions for continuous integration:
+
+- **Build & Test**: Runs on every push/PR to main, master, or develop branches
+  - Tests on Ubuntu, Windows, and macOS
+  - Checks code formatting with `cargo fmt`
+  - Runs linting with `cargo clippy`
+  - Executes all unit tests
+  - Builds in both debug and release modes
+  - Runs benchmark tests
+- **Security Audit**: Scans dependencies for known vulnerabilities
+
+View workflow: `.github/workflows/ci.yml`

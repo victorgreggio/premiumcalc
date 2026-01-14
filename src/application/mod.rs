@@ -46,7 +46,10 @@ impl PremiumCalculationApp {
 
     /// Calculate premium for a single applicant
     #[allow(dead_code)]
-    pub fn calculate_premium(&self, applicant: &Applicant) -> Result<PremiumResult, Box<dyn Error>> {
+    pub fn calculate_premium(
+        &self,
+        applicant: &Applicant,
+    ) -> Result<PremiumResult, Box<dyn Error>> {
         self.calculator.calculate(applicant)
     }
 }
@@ -102,12 +105,9 @@ mod tests {
 
     #[test]
     fn test_load_applicants() {
-        let applicants = vec![
-            create_test_applicant(1, 30),
-            create_test_applicant(2, 40),
-        ];
+        let applicants = vec![create_test_applicant(1, 30), create_test_applicant(2, 40)];
         let app = create_app(applicants.clone());
-        
+
         let loaded = app.load_applicants().unwrap();
         assert_eq!(loaded.len(), 2);
         assert_eq!(loaded[0].id, 1);
@@ -118,7 +118,7 @@ mod tests {
     fn test_calculate_premium_single() {
         let applicants = vec![create_test_applicant(1, 30)];
         let app = create_app(applicants.clone());
-        
+
         let result = app.calculate_premium(&applicants[0]).unwrap();
         assert_eq!(result.applicant.id, 1);
         assert!(result.final_premium > 0.0);
@@ -132,9 +132,9 @@ mod tests {
             create_test_applicant(3, 50),
         ];
         let app = create_app(applicants.clone());
-        
+
         let (results, duration) = app.calculate_all_premiums(applicants);
-        
+
         assert_eq!(results.len(), 3);
         assert!(duration.as_nanos() > 0);
         assert_eq!(results[0].applicant.id, 1);
@@ -147,9 +147,9 @@ mod tests {
         let applicants: Vec<Applicant> = (1..=100)
             .map(|id| create_test_applicant(id, 30 + (id % 40)))
             .collect();
-        
+
         let app = create_app(applicants.clone());
-        
+
         let (results, _duration) = app.calculate_all_premiums(applicants);
         assert_eq!(results.len(), 100);
     }

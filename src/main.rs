@@ -25,7 +25,8 @@ use ui::AppState;
 fn main() -> Result<(), Box<dyn Error>> {
     // Check for benchmark mode
     let args: Vec<String> = std::env::args().collect();
-    let benchmark_mode = args.contains(&"--benchmark".to_string()) || args.contains(&"-b".to_string());
+    let benchmark_mode =
+        args.contains(&"--benchmark".to_string()) || args.contains(&"-b".to_string());
 
     // Initialize application with CSV repository and formula repository
     let applicant_repository = Box::new(CsvApplicantRepository::new("applicants.csv".to_string()));
@@ -35,18 +36,28 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Load applicants from repository
     let applicants = app.load_applicants()?;
     let applicant_count = applicants.len();
-    
+
     println!("Loaded {} applicants", applicant_count);
-    
+
     // Warn about large datasets in debug mode
     #[cfg(debug_assertions)]
     if applicant_count > 1000 {
-        eprintln!("\n⚠️  WARNING: Running {} applicants in DEBUG mode will be very slow!", applicant_count);
+        eprintln!(
+            "\n⚠️  WARNING: Running {} applicants in DEBUG mode will be very slow!",
+            applicant_count
+        );
         eprintln!("   For large datasets, use RELEASE mode:");
-        eprintln!("   cargo run --release{}\n", if benchmark_mode { " -- --benchmark" } else { "" });
+        eprintln!(
+            "   cargo run --release{}\n",
+            if benchmark_mode {
+                " -- --benchmark"
+            } else {
+                ""
+            }
+        );
         eprintln!("   Press Ctrl+C to cancel, or wait for debug build to complete...\n");
     }
-    
+
     println!("Calculating premiums in parallel...");
 
     // Calculate all premiums in parallel
@@ -125,4 +136,3 @@ fn run_ui(
         }
     }
 }
-

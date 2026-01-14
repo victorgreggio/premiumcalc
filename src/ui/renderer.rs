@@ -96,7 +96,10 @@ pub fn render_detailed(result: &PremiumResult) -> Vec<Line<'_>> {
             result.applicant.blood_pressure_sys,
             result.applicant.blood_pressure_dia
         )),
-        Line::from(format!("Cholesterol: {} mg/dL", result.applicant.cholesterol)),
+        Line::from(format!(
+            "Cholesterol: {} mg/dL",
+            result.applicant.cholesterol
+        )),
         Line::from(format!(
             "Existing Conditions: {}",
             if result.applicant.existing_conditions == "none" {
