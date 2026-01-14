@@ -1,0 +1,26 @@
+id,name,age,gender,smoker,occupation,annual_income,bmi,blood_pressure_sys,blood_pressure_dia,cholesterol,existing_conditions,family_history_score,coverage_amount,coverage_years
+1,William Lopez,30,M,false,Driver,147000,33.7,149,91,154,none,3,300000,10
+2,Robert Hall,32,M,false,Accountant,84000,29.6,132,83,181,none,7,600000,15
+3,James Thomas,46,M,true,Artist,45000,35.4,155,92,171,none,5,450000,15
+4,Linda Harris,54,F,true,Administrator,132000,38.9,162,96,201,none,2,300000,30
+5,Kenneth Lewis,41,M,false,Technician,50000,32.7,135,77,181,none,0,450000,15
+6,Ronald Roberts,42,M,false,Mechanic,143000,18.1,116,73,169,none,1,750000,20
+7,Michelle Davis,54,F,true,Artist,149000,29.2,144,85,190,none,0,1000000,25
+8,Emily Hall,53,F,false,Nurse,134000,21.7,129,78,190,none,4,1500000,10
+9,John Jackson,40,M,false,Director,45000,37,157,97,178,none,1,550000,20
+10,Karen Lewis,74,F,false,Therapist,46000,38.8,178,102,243,none,1,350000,30
+11,Jennifer Martin,44,F,false,Electrician,39000,31.6,150,86,169,none,2,400000,25
+12,Stephanie Clark,30,F,false,Designer,119000,28.6,130,74,162,asthma,3,1000000,10
+13,Paul Harris,50,M,false,Therapist,126000,39.9,169,103,200,none,6,400000,25
+14,Lisa Nguyen,43,F,false,Accountant,98000,34.5,143,83,176,none,0,350000,30
+15,John Taylor,33,M,false,Nurse,107000,27.9,138,84,184,diabetes,1,550000,25
+16,Jason Robinson,26,M,true,Therapist,69000,31.6,126,80,182,none,4,400000,20
+17,Lisa Robinson,47,F,false,Manager,49000,29.7,140,87,174,none,7,350000,15
+18,Steven Perez,48,M,false,Therapist,148000,32.9,156,98,211,diabetes,3,750000,25
+19,Sandra Mitchell,34,F,true,Teacher,137000,19.9,106,60,179,none,1,300000,20
+20,Betty Allen,49,F,false,Consultant,64000,27.5,132,75,217,arthritis,5,400000,25
+21,Amanda Thompson,25,F,false,Analyst,121000,26.9,116,65,168,none,6,550000,15
+22,Nancy Hill,58,F,false,Pharmacist,62000,27.5,132,79,212,none,2,1000000,10
+23,Richard Anderson,44,M,false,Nurse,137000,18,116,67,213,none,3,750000,30
+24,Lisa Lopez,31,F,false,Artist,57000,27.1,119,75,168,none,3,1500000,10
+25,Sarah Harris,52,F,false,Coordinator,98000,35.6,163,101,184,none,1,450000,25
