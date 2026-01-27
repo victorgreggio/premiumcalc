@@ -13,7 +13,7 @@ name = "generate_data"
 path = "src/bin/generate_data.rs"
 
 [dependencies]
-formcalc = { git = "https://github.com/victorgreggio/formcalc", branch = "main" }
+formcalc = "0.1.0"
 ratatui = "0.30"
 crossterm = "0.28"
 csv = "1.3"
